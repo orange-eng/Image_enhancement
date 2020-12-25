@@ -10,13 +10,13 @@
     * Retinex_SSR（已完成）
     * Retinex_MSR（已完成）
     * Frequency_enhance（已完成）
-
+* SRCNN（已完成）
 
 
 ### 目录
 
 [所需环境 Environment](#所需环境)
-
+[SRCNN](#SRCNN)
 
 
 ## 所需环境
@@ -25,3 +25,13 @@
 * VScode 1.50.1 (IDE)
 * pytorch 1.3 (pip package)
 * torchvision 0.4.0 (pip package)
+* numpy 1.19.4
+* tensorflow 1.13.2
+
+## SRCNN
+1. SRCNN
+SRCNN是深度学习用在超分辨率重建上的开山之作。SRCNN的网络结构非常简单，仅仅用了三个卷积层，网络结构如下图所示。
+
+SRCNN首先使用双三次(bicubic)插值将低分辨率图像放大成目标尺寸，接着通过三层卷积网络拟合非线性映射，最后输出高分辨率图像结果。本文中，作者将三层卷积的结构解释成三个步骤：图像块的提取和特征表示，特征非线性映射和最终的重建。
+三个卷积层使用的卷积核的大小分为为9x9,，1x1和5x5，前两个的输出特征个数分别为64和32。用Timofte数据集（包含91幅图像）和ImageNet大数据集进行训练。使用均方误差(Mean Squared Error, MSE)作为损失函数，有利于获得较高的PSNR。
+code: http://mmlab.ie.cuhk.edu.hk/projects/SRCNN.html
