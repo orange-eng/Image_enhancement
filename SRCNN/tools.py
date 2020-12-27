@@ -94,10 +94,10 @@ def prepare_data(sess, dataset):
     """
     if FLAGS.is_train:
         filenames = os.listdir(dataset)
-        data_dir = os.path.join(os.getcwd(), dataset)
+        data_dir = os.path.join(path, dataset)
         data = glob.glob(os.path.join(data_dir, "*.bmp"))
     else:
-        data_dir = os.path.join(os.sep, (os.path.join(os.getcwd(), dataset)), "Set5")
+        data_dir = os.path.join(os.sep, (os.path.join(path, dataset)), "Set5")
         data = glob.glob(os.path.join(data_dir, "*.bmp"))
 
     return data
@@ -108,9 +108,9 @@ def make_data(sess, data, label):
     Depending on 'is_train' (flag value), savepath would be changed.
     """
     if FLAGS.is_train:
-        savepath = os.path.join(os.getcwd(), 'checkpoint/train.h5')
+        savepath = os.path.join(path, 'checkpoint/train.h5')
     else:
-        savepath = os.path.join(os.getcwd(), 'checkpoint/test.h5')
+        savepath = os.path.join(path, 'checkpoint/test.h5')
 
     with h5py.File(savepath, 'w') as hf:
         hf.create_dataset('data', data=data)
@@ -120,6 +120,7 @@ def make_data(sess, data, label):
 def input_setup(sess, config):
     """
     Read image files and make their sub-images and saved them as a h5 file format.
+    读取图像文件并生成它们的子图像，并将它们保存为h5文件格式。
     """
     # Load data path
     if config.is_train:
@@ -127,29 +128,29 @@ def input_setup(sess, config):
     else:
         data = prepare_data(sess, dataset=path+"\\Test")
 
-    sub_input_sequence = []
-    sub_label_sequence = []
+    sub_input_sequence = []     #全部为[33*33]
+    sub_label_sequence = []     #全部为[21*21]
     padding = abs(config.image_size - config.label_size) / 2 # 6
 
     if config.is_train:
-        for i in xrange(len(data)):
-            input_, label_ = preprocess(data[i], config.scale)
+        for i in xrange(len(data)):                             #一幅图作为一个data
+            input_, label_ = preprocess(data[i], config.scale)  #得到data[]的LR和HR图input_和label_
 
             if len(input_.shape) == 3:
                 h, w, _ = input_.shape
             else:
                 h, w = input_.shape
 
+            #把input_和label_分割成若干自图sub_input和sub_label
             for x in range(0, h-config.image_size+1, config.stride):
                 for y in range(0, w-config.image_size+1, config.stride):
                     sub_input = input_[x:x+config.image_size, y:y+config.image_size] # [33 x 33]
                     sub_label = label_[x+int(padding):x+int(padding)+config.label_size, y+int(padding):y+int(padding)+config.label_size] # [21 x 21]
+                    #按image size大小重排 因此 imgae_size应为33 而label_size应为21
+                    sub_input = sub_input.reshape([config.image_size, config.image_size, 1])        #增加一个通道，变成[33*33*1]    
+                    sub_label = sub_label.reshape([config.label_size, config.label_size, 1])        #增加一个通道，变成[21*21*1]
 
-                    # Make channel value
-                    sub_input = sub_input.reshape([config.image_size, config.image_size, 1])  
-                    sub_label = sub_label.reshape([config.label_size, config.label_size, 1])
-
-                    sub_input_sequence.append(sub_input)
+                    sub_input_sequence.append(sub_input)                #在sub_input_sequence末尾加sub_input中元素 但考虑为空
                     sub_label_sequence.append(sub_label)
 
     else:
@@ -184,6 +185,8 @@ def input_setup(sess, config):
     arrlabel = np.asarray(sub_label_sequence) # [?, 21, 21, 1]
 
     make_data(sess, arrdata, arrlabel)
+    #制作train.h5文件或是test.h5文件，用于存储训练图像数据或是测试图像数据
+    #首先找到H5文件所在的路径，然后写入两个dataset：data和label
 
     if not config.is_train:
         return nx, ny
@@ -193,7 +196,7 @@ def input_setup(sess, config):
 def imsave(image,path):
     return scipy.misc.imsave(path,image)
 # #--------------------------------------------------
-# '''作用是什么。不太清楚'''
+# 拼接操作
 def merge(images,size):
     h,w = images.shape[1],images.shape[2]
     img = np.zeros((h*size[0],w*size[1],1))

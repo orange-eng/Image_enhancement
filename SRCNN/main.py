@@ -10,7 +10,7 @@ path = os.path.abspath(os.path.dirname(sys.argv[0]))
 #----------------------------------------一种初始化所有参数的方法
 flags = tf.app.flags
 #第一个是参数名称，第二个参数是默认值，第三个是参数描述
-flags.DEFINE_integer("epoch",1,"Number of epoch[3]")
+flags.DEFINE_integer("epoch",0,"Number of epoch[3]")
 flags.DEFINE_integer("batch_size",128,"the size of batch [128]")
 flags.DEFINE_integer("image_size",33,"the size of image [33]")
 flags.DEFINE_integer("label_size",21,"The size of label to produce [21]")
@@ -20,7 +20,7 @@ flags.DEFINE_integer("scale", 3, "The size of scale factor for preprocessing inp
 flags.DEFINE_integer("stride", 14, "The size of stride to apply input image [14]")
 flags.DEFINE_string("checkpoint_dir", "checkpoint", "Name of checkpoint directory [checkpoint]")
 flags.DEFINE_string("sample_dir", "sample", "Name of sample directory [sample]")
-flags.DEFINE_boolean("is_train", False, "True for training, False for testing [True]")
+flags.DEFINE_boolean("is_train", True, "True for training, False for testing [True]")
 FLAGS = flags.FLAGS
 
 #--------------------------------------------------------
