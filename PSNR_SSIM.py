@@ -75,10 +75,11 @@ def compute_ssim(im1, im2, k1=0.01, k2=0.03, win_size=11, L=255):
  
  
 if __name__ == "__main__":
-    imagePath1=path+"/img/1.png"
-    imagePath2=path+"/img/2.png"
+    imagePath1=path+"/test2.png"
+    imagePath2=path+"/test2.png"
     im1 = Image.open(imagePath1).convert(('L'))
     im2 = Image.open(imagePath2).convert(('L'))
+    im2 = im2.resize(im1.size)                      #把两个图片调整成为一样大小
     print("SSIM",compute_ssim(np.array(im1),np.array(im2)))
     PSDR = psnr(target=im1,ref=im2)
     print("PSDR",PSDR)
