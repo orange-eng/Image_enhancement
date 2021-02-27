@@ -11,6 +11,8 @@
     * Retinex_MSR（已完成）
     * Frequency_enhance（已完成）
 * SRCNN（已完成）
+* SRGAN（已完成）
+* ESPCN（已完成）
 
 ### 目录
 
