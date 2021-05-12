@@ -98,7 +98,8 @@ class ft_net(nn.Module):
 model=ft_net().cuda()
 
 model.eval()
-img=cv2.imread(path + '\\{}.png'.format(picture_name))
+#img=cv2.imread(path + '\\{}.jpg'.format(picture_name))
+img=cv2.imread(path + '\\1.jpg')
 #img=cv2.cvtColor(img,cv2.COLOR_BGR2RGB)
 print(img.shape)
 transform = transforms.Compose(
